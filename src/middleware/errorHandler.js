@@ -1,35 +1,23 @@
 // src/middleware/errorHandler.js
 
 /**
- * Maneja los errores de las rutas
- * @param {Error} err - Error ocurrido
- * @param {Request} req - Objeto de solicitud
- * @param {Response} res - Objeto de respuesta
- * @param {Function} next - Función para pasar al siguiente middleware
+ * Middleware para manejar errores en la aplicación
+ * @param {Error} err - El error capturado
+ * @param {Request} req - Objeto de solicitud Express
+ * @param {Response} res - Objeto de respuesta Express
+ * @param {Function} next - Función para continuar al siguiente middleware
  */
 function errorHandler(err, req, res, next) {
-    console.error(`❌ Error en la aplicación:`, err);
-    res.status(500).json({ 
-        error: `❌ Error en el servidor`, 
-        detalle: err.message 
-    });
+  console.error(err.stack);
+  
+  const statusCode = err.statusCode || 500;
+  const message = err.message || 'Error interno del servidor';
+  
+  res.status(statusCode).json({
+    status: 'error',
+    statusCode,
+    message
+  });
 }
 
-/**
- * Maneja los errores específicos
- * @param {Error} err - Error ocurrido
- * @param {Response} res - Objeto de respuesta
- * @param {string} mensaje - Mensaje personalizado
- */
-function handleError(err, res, mensaje) {
-    console.error(`❌ ${mensaje}:`, err);
-    res.status(500).json({ 
-        error: `❌ ${mensaje}`, 
-        detalle: err.message 
-    });
-}
-
-module.exports = {
-    errorHandler,
-    handleError
-};
+module.exports = errorHandler;
